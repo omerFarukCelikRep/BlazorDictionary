@@ -13,6 +13,6 @@ public class EntryCommentVoteConfiguration : BaseEntityConfiguration<EntryCommen
 
         builder.ToTable("EntryCommentVotes", BlazorDictionaryDbContext.DEFAULT_SCHEMA);
 
-        builder.HasOne(x => x.EntryComment).WithMany(x => x.EntryCommentVotes).HasForeignKey(x => x.EntryCommentId);
+        builder.HasOne(x => x.EntryComment).WithMany(x => x.EntryCommentVotes).HasForeignKey(x => x.EntryCommentId).OnDelete(DeleteBehavior.Restrict);
     }
 }

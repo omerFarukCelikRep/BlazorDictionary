@@ -14,6 +14,6 @@ public class EntryCommentFavoriteConfiguration : BaseEntityConfiguration<EntryCo
         builder.ToTable("EntryCommentFavorites", BlazorDictionaryDbContext.DEFAULT_SCHEMA);
 
         builder.HasOne(x => x.EntryComment).WithMany(x => x.EntryCommentFavorites).HasForeignKey(x => x.EntryCommentId);
-        builder.HasOne(x => x.CreatedBy).WithMany(x => x.EntryCommentFavorites).HasForeignKey(x => x.CreatedById);
+        builder.HasOne(x => x.CreatedBy).WithMany(x => x.EntryCommentFavorites).HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
     }
 }
