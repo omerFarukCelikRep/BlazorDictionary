@@ -8,6 +8,8 @@ public class BlazorDictionaryDbContext : DbContext
 {
     public const string DEFAULT_SCHEMA = "dbo";
 
+    public BlazorDictionaryDbContext() { }
+
     public BlazorDictionaryDbContext(DbContextOptions<BlazorDictionaryDbContext> options) : base(options) { }
 
     public DbSet<User> Users { get; set; }
@@ -18,6 +20,18 @@ public class BlazorDictionaryDbContext : DbContext
     public DbSet<EntryCommentVote> EntryCommentVotes { get; set; }
     public DbSet<EntryCommentFavorite> EntryCommentFavorites { get; set; }
     public DbSet<EmailConfirmation> EmailConfirmations { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var connStr = "Server=.; Database=BlazorDictionaryDb; Trusted_Connection=True;";
+            optionsBuilder.UseSqlServer(connStr, opt =>
+            {
+                opt.EnableRetryOnFailure();
+            });
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
