@@ -170,9 +170,23 @@ public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : Base
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public virtual Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, bool tracking = false, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, bool tracking = false, params Expression<Func<TEntity, object>>[] includes)
     {
-        throw new NotImplementedException();
+        IQueryable<TEntity> query = Table;
+
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        query = ApplyIncludes(query, includes);
+
+        if (tracking)
+        {
+            query = query.AsNoTracking();
+        }
+
+        return await query.FirstOrDefaultAsync();
     }
 
     public virtual IQueryable<TEntity> GetAll(Expression<Func<TEntity, bool>> predicate, bool tracking = false, params Expression<Func<TEntity, object>>[] includes)
