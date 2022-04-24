@@ -1,4 +1,6 @@
-﻿using BlazorDictionary.Infrastructure.Persistence.Contexts;
+﻿using BlazorDictionary.Api.Application.Interfaces.Repositories;
+using BlazorDictionary.Infrastructure.Persistence.Contexts;
+using BlazorDictionary.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +21,9 @@ public static class Registration
 
         //var seedData = new SeedData();
         //seedData.SeedAsync(configuration).GetAwaiter().GetResult();
+
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IEntryRepository, EntryRepository>();
 
         return services;
     }
