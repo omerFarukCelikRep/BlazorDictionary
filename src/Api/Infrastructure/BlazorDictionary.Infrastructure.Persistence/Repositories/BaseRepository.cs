@@ -8,9 +8,9 @@ namespace BlazorDictionary.Infrastructure.Persistence.Repositories;
 
 public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
 {
-    protected readonly BlazorDictionaryDbContext _context;
+    protected readonly DbContext _context;
     protected DbSet<TEntity> Table => _context.Set<TEntity>();
-    public BaseRepository(BlazorDictionaryDbContext context)
+    public BaseRepository(DbContext context)
     {
         _context = context ?? throw new ArgumentNullException();
     }
@@ -158,7 +158,7 @@ public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : Base
 
     public virtual bool DeleteRange(Expression<Func<TEntity, bool>> predicate)
     {
-        _context.RemoveRange(predicate);
+        _context.RemoveRange(Table.Where(predicate));
 
         return _context.SaveChanges() > 0;
     }
