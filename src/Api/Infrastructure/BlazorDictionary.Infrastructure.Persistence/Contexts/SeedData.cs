@@ -18,7 +18,7 @@ internal class SeedData
             .RuleFor(x => x.Email, x => x.Internet.Email())
             .RuleFor(x => x.Username, x => x.Internet.UserName())
             .RuleFor(x => x.Password, x => PasswordEncryptor.Encrypt(x.Internet.Password()))
-            .RuleFor(x => x.EmailConfirmed, x => x.PickRandom(true,false))
+            .RuleFor(x => x.EmailConfirmed, x => x.PickRandom(true, false))
             .Generate(500);
 
         return result;
