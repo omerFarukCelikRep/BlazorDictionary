@@ -1,6 +1,5 @@
 ﻿using BlazorDictionary.Api.Application.Interfaces.Repositories;
 using BlazorDictionary.Api.Domain.Models;
-using BlazorDictionary.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -45,7 +44,7 @@ public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : Base
             _context.Update(entity);
         }
 
-        return await  _context.SaveChangesAsync();
+        return await _context.SaveChangesAsync();
     }
 
     public virtual int AddRange(IEnumerable<TEntity> entities)
