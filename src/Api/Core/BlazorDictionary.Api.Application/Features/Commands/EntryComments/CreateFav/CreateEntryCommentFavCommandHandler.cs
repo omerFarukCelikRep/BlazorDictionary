@@ -9,8 +9,8 @@ public class CreateEntryCommentFavCommandHandler : IRequestHandler<CreateEntryCo
 {
     public async Task<bool> Handle(CreateEntryCommentFavCommand request, CancellationToken cancellationToken)
     {
-        QueueFactory.SendMessageToExhange(exchangeName: DictionaryConstants.FavExhangeName, 
-                                            exchangeType: DictionaryConstants.DefaultExchangeType, 
+        QueueFactory.SendMessageToExhange(exchangeName: DictionaryConstants.FavExhangeName,
+                                            exchangeType: DictionaryConstants.DefaultExchangeType,
                                             queueName: DictionaryConstants.CreateEntryCommentFavQueueName,
                                             obj: new CreateEntryCommentFavEvent()
                                             {

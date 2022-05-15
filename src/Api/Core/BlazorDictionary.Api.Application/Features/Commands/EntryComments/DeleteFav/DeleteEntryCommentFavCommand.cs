@@ -2,7 +2,7 @@
 
 namespace BlazorDictionary.Api.Application.Features.Commands.EntryComments.DeleteFav;
 
-public class DeleteEntryCommentFavCommand :IRequest<bool>
+public class DeleteEntryCommentFavCommand : IRequest<bool>
 {
     public DeleteEntryCommentFavCommand(Guid entryCommentId, Guid userId)
     {
