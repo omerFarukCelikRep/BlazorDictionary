@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlazorDictionary.Api.Application.Features.Queries.GetMainPageEntries;
 
-public class GetMainPageEntriesQueryHandler : IRequestHandler<GetMainPageEntriesQuery, PagedViewModel<GetEntryDetailsViewModel>>
+public class GetMainPageEntriesQueryHandler : IRequestHandler<GetMainPageEntriesQuery, PagedViewModel<GetEntryDetailViewModel>>
 {
     private readonly IEntryRepository _entryRepository;
 
@@ -15,7 +15,7 @@ public class GetMainPageEntriesQueryHandler : IRequestHandler<GetMainPageEntries
     {
         _entryRepository = entryRepository;
     }
-    public async Task<PagedViewModel<GetEntryDetailsViewModel>> Handle(GetMainPageEntriesQuery request, CancellationToken cancellationToken)
+    public async Task<PagedViewModel<GetEntryDetailViewModel>> Handle(GetMainPageEntriesQuery request, CancellationToken cancellationToken)
     {
         var query = _entryRepository.AsQueryable();
 
@@ -23,7 +23,7 @@ public class GetMainPageEntriesQueryHandler : IRequestHandler<GetMainPageEntries
              .Include(x => x.CreatedBy)
              .Include(x => x.EntryVotes);
 
-        var entryDetails = query.Select(x => new GetEntryDetailsViewModel
+        var entryDetails = query.Select(x => new GetEntryDetailViewModel
         {
             Id = x.Id,
             Subject = x.Subject,
@@ -39,6 +39,6 @@ public class GetMainPageEntriesQueryHandler : IRequestHandler<GetMainPageEntries
 
         var entries = await entryDetails.GetPaged(request.Page, request.PageSize);
 
-        return new PagedViewModel<GetEntryDetailsViewModel>(entries.Results, entries.PageInfo);
+        return entries;
     }
 }
