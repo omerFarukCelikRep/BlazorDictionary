@@ -1,4 +1,5 @@
 ﻿using BlazorDictionary.Api.Application.Features.Commands.Users.ConfirmEmail;
+using BlazorDictionary.Api.Application.Features.Queries.GetUserDetail;
 using BlazorDictionary.Common.Events.Users;
 using BlazorDictionary.Common.Models.RequestModels;
 using MediatR;
@@ -6,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorDictionary.Api.WebApi.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
 public class UsersController : BaseController
 {
     private readonly IMediator _mediator;
@@ -16,6 +15,23 @@ public class UsersController : BaseController
     {
         _mediator = mediator;
     }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var user = await _mediator.Send(new GetUserDetailQuery(id));
+
+        return Ok(user);
+    }
+
+    [HttpGet("UserName/{userName}")]
+    public async Task<IActionResult> GetByUserName(string userName)
+    {
+        var user = await _mediator.Send(new GetUserDetailQuery(Guid.Empty, userName));
+
+        return Ok(user);
+    }
+
     [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] LoginUserCommand loginUserCommand)
     {
