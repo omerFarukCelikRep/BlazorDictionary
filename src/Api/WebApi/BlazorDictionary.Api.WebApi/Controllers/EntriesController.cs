@@ -46,7 +46,7 @@ public class EntriesController : BaseController
     [HttpGet("Comments/{id:guid}")]
     public async Task<IActionResult> GetEntryComments(Guid id, int page, int pageSize)
     {
-        var result = await _mediator.Send(new GetEntryCommentsQuery(id,UserId,page, pageSize));
+        var result = await _mediator.Send(new GetEntryCommentsQuery(id, UserId, page, pageSize));
 
         return Ok(result);
     }
