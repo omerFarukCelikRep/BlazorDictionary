@@ -12,21 +12,24 @@ public static class ApplicationBuilderExtension
                                                                  bool useDefaultHandlingResponse = true,
                                                                  Func<HttpContext, Exception, Task>? handleException = null)
     {
-        app.Run(context =>
+        app.UseExceptionHandler(options =>
         {
-            var exceptionObject = context.Features.Get<IExceptionHandlerFeature>();
-
-            if (!useDefaultHandlingResponse && handleException is null)
+            options.Run(context =>
             {
-                throw new ArgumentNullException(nameof(handleException), $"{nameof(handleException)} cannot be null when {nameof(useDefaultHandlingResponse)} is false");
-            }
+                var exceptionObject = context.Features.Get<IExceptionHandlerFeature>();
 
-            if (!useDefaultHandlingResponse && handleException is not null)
-            {
-                return handleException(context, exceptionObject.Error);
-            }
+                if (!useDefaultHandlingResponse && handleException is null)
+                {
+                    throw new ArgumentNullException(nameof(handleException), $"{nameof(handleException)} cannot be null when {nameof(useDefaultHandlingResponse)} is false");
+                }
 
-            return DefaultHandleException(context, exceptionObject.Error, includeExceptionDetails);
+                if (!useDefaultHandlingResponse && handleException is not null)
+                {
+                    return handleException(context, exceptionObject.Error);
+                }
+
+                return DefaultHandleException(context, exceptionObject.Error, includeExceptionDetails);
+            });
         });
 
         return app;
@@ -44,9 +47,12 @@ public static class ApplicationBuilderExtension
 
         if (exception is DatabaseValidationException)
         {
+            statusCode = HttpStatusCode.BadRequest;
             var validationResponse = new ValidationResponseModel(exception.Message);
 
             await WriteResponse(context, statusCode, validationResponse);
+
+            return;
         }
 
         var response = new
