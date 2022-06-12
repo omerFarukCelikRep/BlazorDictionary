@@ -57,10 +57,10 @@ public static class LocalStorageExtension
     {
         var token = syncLocalStorageService.GetItem<string>(TokenName);
 
-        if (string.IsNullOrEmpty(token))
-        {
-            token = "";
-        }
+        // if (string.IsNullOrEmpty(token))
+        // {
+        //     token = "";
+        // }
 
         return token;
     }
@@ -69,10 +69,10 @@ public static class LocalStorageExtension
     {
         var token = await localStorageService.GetItemAsync<string>(TokenName);
 
-        if (string.IsNullOrEmpty(token))
-        {
-            token = "";
-        }
+        // if (string.IsNullOrEmpty(token))
+        // {
+        //     token = "";
+        // }
 
         return token;
     }
