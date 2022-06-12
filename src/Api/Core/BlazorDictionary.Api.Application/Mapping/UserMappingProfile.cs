@@ -12,8 +12,7 @@ public class UserMappingProfile : Profile
         CreateMap<User, LoginUserViewModel>()
             .ReverseMap();
 
-        CreateMap<User, CreateUserCommand>()
-            .ReverseMap();
+        CreateMap<CreateUserCommand, User>();
 
         CreateMap<User, UpdateUserCommand>()
             .ReverseMap();
