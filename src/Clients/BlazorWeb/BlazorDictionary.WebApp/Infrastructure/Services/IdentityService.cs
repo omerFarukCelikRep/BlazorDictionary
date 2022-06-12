@@ -2,9 +2,11 @@
 using BlazorDictionary.Common.Infrastracture.Results;
 using BlazorDictionary.Common.Models.Queries;
 using BlazorDictionary.Common.Models.RequestModels;
+using BlazorDictionary.WebApp.Infrastructure.Authorization;
 using BlazorDictionary.WebApp.Infrastructure.Extensions;
 using BlazorDictionary.WebApp.Infrastructure.Services.Interfaces;
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -16,10 +18,13 @@ public class IdentityService : IIdentityService
 {
     private readonly HttpClient _client;
     private readonly ISyncLocalStorageService _syncLocalStorageService;
-    public IdentityService(HttpClient client, ISyncLocalStorageService syncLocalStorageService)
+    private readonly AuthenticationStateProvider _authenticationStateProvider;
+
+    public IdentityService(HttpClient client, ISyncLocalStorageService syncLocalStorageService, AuthenticationStateProvider authenticationStateProvider)
     {
         _client = client;
         _syncLocalStorageService = syncLocalStorageService;
+        _authenticationStateProvider = authenticationStateProvider;
     }
     public bool IsLoggedIn => !string.IsNullOrEmpty(GetUserToken());
 
@@ -42,7 +47,7 @@ public class IdentityService : IIdentityService
     {
         string responseString;
 
-        var httpResponse = await _client.PostAsJsonAsync("/api/User/Login", loginUserCommand);
+        var httpResponse = await _client.PostAsJsonAsync("/api/Users/Login", loginUserCommand);
 
         if (httpResponse != null && !httpResponse.IsSuccessStatusCode)
         {
@@ -73,6 +78,8 @@ public class IdentityService : IIdentityService
         _syncLocalStorageService.SetUsername(response.Username);
         _syncLocalStorageService.SetUserId(response.Id);
 
+        ((AuthStateProvider)_authenticationStateProvider).NotifyUserLogin(response.Username, response.Id);
+
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", response.Username);
 
         return true;
@@ -83,6 +90,8 @@ public class IdentityService : IIdentityService
         _syncLocalStorageService.RemoveItem(LocalStorageExtension.TokenName);
         _syncLocalStorageService.RemoveItem(LocalStorageExtension.UserName);
         _syncLocalStorageService.RemoveItem(LocalStorageExtension.UserId);
+
+        ((AuthStateProvider)_authenticationStateProvider).NotifyUserLogout();
 
         _client.DefaultRequestHeaders.Authorization = null;
     }
