@@ -1,0 +1,65 @@
+@page "/login"
+
+<div class="login-container">
+    <div class="row justify-content-center align-items-start h-100">
+        <div class="login-form">
+            <EditForm Model="@_loginUserCommand" OnValidSubmit="LoginProcess">
+
+                @if (_errorText != string.Empty)
+                {
+                    <span class="text-danger">
+                        @_errorText
+                    </span>
+                    <br />
+                }
+
+                <div class="form-group">
+                    <input @bind-value="_loginUserCommand.Email" class="form-control" type="text" placeholder="" />
+                </div>
+                <br />
+                <div class="form-group">
+                    <input @bind-value="_loginUserCommand.Password" class="form-control" type="password"
+                        placeholder="" />
+                </div>
+                <br />
+                <div class="form-group">
+                    <button class="btn btn-success btn-dictionary">Endeavor to Login</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    IIdentityService IdentityService { get; set; }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    private string _errorText = string.Empty;
+
+    private LoginUserCommand _loginUserCommand = new();
+
+    public async Task LoginProcess()
+    {
+        try
+        {
+            var response = await IdentityService.Login(_loginUserCommand);
+
+            if (response)
+            {
+                _errorText = string.Empty;
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                _errorText = "Login Failed with Unkown Reasons";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorText = ex.Message;
+        }
+    }
+}
