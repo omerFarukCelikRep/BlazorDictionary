@@ -10,7 +10,8 @@ builder.Services.AddControllers()
                 {
                     options.JsonSerializerOptions.PropertyNamingPolicy = null;
                 })
-                .AddFluentValidation();
+                .AddFluentValidation()
+                .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -19,6 +20,13 @@ builder.Services.ConfigureAuthorization(builder.Configuration);
 
 builder.Services.AddApplicationRegistration();
 builder.Services.AddInfrastructureRegistration(builder.Configuration);
+
+builder.Services.AddCors(options => options.AddPolicy("MyPolicy", build =>
+{
+    build.AllowAnyOrigin()
+         .AllowAnyMethod()
+         .AllowAnyHeader();
+}));
 
 var app = builder.Build();
 
@@ -34,6 +42,8 @@ app.ConfigureExceptionHandling(includeExceptionDetails: app.Environment.IsDevelo
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors("MyPolicy");
 
 app.MapControllers();
 
