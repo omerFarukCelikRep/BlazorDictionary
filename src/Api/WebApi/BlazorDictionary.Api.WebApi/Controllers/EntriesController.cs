@@ -6,6 +6,7 @@ using BlazorDictionary.Api.Application.Features.Queries.GetUserEntries;
 using BlazorDictionary.Common.Models.Queries;
 using BlazorDictionary.Common.Models.RequestModels;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorDictionary.Api.WebApi.Controllers;
@@ -20,6 +21,7 @@ public class EntriesController : BaseController
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetEntries([FromQuery] GetEntriesQuery query)
     {
         var entries = await _mediator.Send(query);
@@ -28,6 +30,7 @@ public class EntriesController : BaseController
     }
 
     [HttpGet("{id:guid}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _mediator.Send(new GetEntryDetailQuery(id, UserId));
@@ -36,6 +39,7 @@ public class EntriesController : BaseController
     }
 
     [HttpGet("MainPageEntries")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetMainPageEntries(int page, int pageSize)
     {
         var entries = await _mediator.Send(new GetMainPageEntriesQuery(UserId, page, pageSize));
@@ -44,6 +48,7 @@ public class EntriesController : BaseController
     }
 
     [HttpGet("Comments/{id:guid}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetEntryComments(Guid id, int page, int pageSize)
     {
         var result = await _mediator.Send(new GetEntryCommentsQuery(id, UserId, page, pageSize));
@@ -65,6 +70,7 @@ public class EntriesController : BaseController
     }
 
     [HttpGet("Search")]
+    [AllowAnonymous]
     public async Task<IActionResult> Search([FromQuery] SearchEntryQuery query)
     {
         var result = await _mediator.Send(query);
