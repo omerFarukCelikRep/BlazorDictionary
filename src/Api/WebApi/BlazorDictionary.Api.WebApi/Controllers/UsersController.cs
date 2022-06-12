@@ -3,6 +3,7 @@ using BlazorDictionary.Api.Application.Features.Queries.GetUserDetail;
 using BlazorDictionary.Common.Events.Users;
 using BlazorDictionary.Common.Models.RequestModels;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorDictionary.Api.WebApi.Controllers;
@@ -17,6 +18,7 @@ public class UsersController : BaseController
     }
 
     [HttpGet("{id:guid}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById(Guid id)
     {
         var user = await _mediator.Send(new GetUserDetailQuery(id));
@@ -25,6 +27,7 @@ public class UsersController : BaseController
     }
 
     [HttpGet("UserName/{userName}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetByUserName(string userName)
     {
         var user = await _mediator.Send(new GetUserDetailQuery(Guid.Empty, userName));
@@ -33,6 +36,7 @@ public class UsersController : BaseController
     }
 
     [HttpPost("Login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginUserCommand loginUserCommand)
     {
         var response = await _mediator.Send(loginUserCommand);
@@ -42,6 +46,7 @@ public class UsersController : BaseController
 
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> Create([FromBody] CreateUserCommand createUserCommand)
     {
         var guid = await _mediator.Send(createUserCommand);
@@ -58,6 +63,7 @@ public class UsersController : BaseController
     }
 
     [HttpPost("Confirm")]
+    [AllowAnonymous]
     public async Task<IActionResult> ConfirmEmail(Guid id)
     {
         var result = await _mediator.Send(new ConfirmEmailCommand { ConfirmationId = id });
