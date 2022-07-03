@@ -1,0 +1,88 @@
+@if (Entry is not null)
+{
+    <div class="card border-0">
+        <div class="card-body">
+            <h5 class="card-title">
+                <a href="/entry/@Entry.Id">
+                    <strong class="entry-subject">
+                        @Entry.Subject
+                    </strong>
+                </a>
+            </h5>
+            <br />
+            <p class="entry-content">
+                @Entry.Content
+            </p>
+
+            @if (IsMyEntry)
+            {
+                <EntryFooterFavoriteComponent EntryId="@Entry.Id" OnFavClicked="@OnFavClicked"
+            FavoritedCount="@Entry.FavoritedCount" IsFavorited="@Entry.IsFavorited" />
+            }
+            else
+            {
+                <EntryFooterRateFavoriteComponent EntryId="@Entry.Id" OnFavClicked="@OnFavClicked"
+            OnVoteClicked="@OnVoteClicked" FavoritedCount="@Entry.FavoritedCount" IsFavorited="@Entry.IsFavorited" />
+            }
+
+            <EntryFooterAuthorComponent UserName="@Entry.CreatedByUserName" CreateDate="@Entry.CreatedDate" />
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public GetEntryDetailViewModel Entry { get; set; }
+
+    [Parameter]
+    public bool IsMyEntry { get; set; }
+
+    [Inject]
+    IVoteService VoteService { get; set; }
+
+    [Inject]
+    IFavoriteService FavoriteService { get; set; }
+
+    private async Task OnFavClicked(FavClickedEventArgs favClickedEventArgs)
+    {
+        if (favClickedEventArgs.IsFaved)
+        {
+            await FavoriteService.CreateEntryFav(favClickedEventArgs.EntryId.Value);
+            Entry.IsFavorited = true;
+            Entry.FavoritedCount++;
+        }
+        else
+        {
+            await FavoriteService.DeleteEntryFav(favClickedEventArgs.EntryId.Value);
+            Entry.IsFavorited = false;
+            Entry.FavoritedCount--;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task OnVoteClicked(VoteClickedEventArgs voteClickedEventArgs)
+    {
+        if (voteClickedEventArgs.UpVoteDeleted || voteClickedEventArgs.DownVoteDeleted)
+        {
+            await VoteService.DeleteEntryVote(voteClickedEventArgs.EntryId);
+            Entry.VoteType = VoteType.None;
+            return;
+        }
+
+        if (voteClickedEventArgs.IsUpVoteClicked)
+        {
+            await VoteService.CreateEntryUpVote(voteClickedEventArgs.EntryId);
+            Entry.VoteType = VoteType.UpVote;
+            return;
+        }
+
+        if (voteClickedEventArgs.IsDownVoteClicked)
+        {
+            await VoteService.CreateEntryDownVote(voteClickedEventArgs.EntryId);
+            Entry.VoteType = VoteType.DownVote;
+            return;
+        }
+
+    }
+}
